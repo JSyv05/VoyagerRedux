@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include"command.h"
-#include"Player.h"
-
-
+#include "command.h"
+#include "Player.h"
 #include <string>
+#include <vector>
+#include <unordered_map>
 
 /*
 The function of the Game class is to manage the overall state and flow of the game.
@@ -39,31 +39,117 @@ private:
         Attack,
         Collect,
         Credits,
-        Drop,
-        Error,
-        Exchange,
+        DropRock,
+        DropHelp,
+        DropPlant,
+        ExchangeFuel,
+        ExchangeHealth,
+        ExchangeHelp,
+        ExchangeSample,
+        Exit,
+        Fuel,
+        Health,
         Help,
+        InspectHelp,
+        InspectPlant,
         InspectRock,
         Instructions,
+        Interact,
+        InteractHelp,
+        Inventory,
         Load,
         MainMenu,
         Next,
+        Quit,
         ReturnToShip,
         Save,
-        Scan,
-        Exit,
-        Fuel,
-        Quit,
-        ShipMainMenu,
+        ScanArea,
+        ScanHelp,
+        ScanPlanets,
         Sneak,
         Start,
         Storage,
-        Store,
-        Travel,
-        Talk,
-        Inventory,
-        Health,
+        StorePlant,
+        StoreHelp,
+        StoreRock,
+        TravelDestination,
+        TravelHelp,
+        TravelPosition,
+        UNKNOWN
     };
+
+    std::unordered_map<std::string, std::unordered_map<std::string, ValidCommand>> commandMap = {
+        {"attack", {{"", ValidCommand::Attack}}},
+        {"collect", {{"", ValidCommand::Collect}}},
+        {"credits", {{"", ValidCommand::Credits}}},
+        {"drop", {
+            {"", ValidCommand::DropHelp},
+            {"-r", ValidCommand::DropRock},
+            {"--rock", ValidCommand::DropRock},
+            {"-p", ValidCommand::DropPlant},
+            {"--plant", ValidCommand::DropPlant}}},
+        {"exchange",
+            {{"", ValidCommand::ExchangeHelp},
+             {"-s", ValidCommand::ExchangeSample},
+             {"--sample", ValidCommand::ExchangeSample},
+             {"-f", ValidCommand::ExchangeFuel}, 
+             {"--fuel", ValidCommand::ExchangeFuel},
+             {"-hp", ValidCommand::ExchangeHealth},
+             {"--health", ValidCommand::ExchangeHealth},
+             {"-h", ValidCommand::ExchangeHelp},
+             {"--help", ValidCommand::ExchangeHelp}}},
+        {"exit", {{"ship", ValidCommand::Exit}}},
+        {"fuel", {{"", ValidCommand::Fuel}}},
+        {"health", {{"", ValidCommand::Health}}},
+        {"help", {{"", ValidCommand::Help}}},
+        {"inspect", 
+            {{"", ValidCommand::InspectHelp}, 
+             {"-r", ValidCommand::InspectRock},
+             {"--rock", ValidCommand::InspectRock},
+             {"-p", ValidCommand::InspectPlant},
+             {"--plant", ValidCommand::InspectPlant},
+             {"-h", ValidCommand::InspectHelp},
+             {"--help", ValidCommand::InspectHelp}}},
+        {"instructions", {{"", ValidCommand::Instructions}}},
+        {"interact",
+            {{"", ValidCommand::InteractHelp},
+             {"-t", ValidCommand::InspectRock},
+             {"--target", ValidCommand::InspectRock},
+             {"-h", ValidCommand::InteractHelp},
+             {"--help", ValidCommand::InteractHelp}}},
+        {"main", {{"menu", ValidCommand::MainMenu}}},
+        {"next", {{"", ValidCommand::Next}}},
+        {"quit", {{"", ValidCommand::Quit}}},
+        {"return", {{"to", ValidCommand::ReturnToShip}}},
+        {"scan",
+            {{"", ValidCommand::ScanHelp},
+             {"-a", ValidCommand::ScanArea},
+             {"--area", ValidCommand::ScanArea},
+             {"-p", ValidCommand::ScanPlanets},
+             {"--planet", ValidCommand::ScanPlanets},
+             {"-h", ValidCommand::ScanHelp},
+             {"--help", ValidCommand::ScanHelp}}},
+        {"sneak", {{"", ValidCommand::Sneak}}},
+        {"start", {{"game", ValidCommand::Start}}},
+        {"storage", {{"", ValidCommand::Storage}}},
+        {"store",
+            {{"", ValidCommand::StoreHelp},
+             {"-p", ValidCommand::StorePlant},
+             {"--plant", ValidCommand::StorePlant},
+             {"-r", ValidCommand::StoreRock},
+             {"--rock", ValidCommand::StoreRock},
+             {"-h", ValidCommand::StoreHelp},
+             {"--help", ValidCommand::StoreHelp}}},
+        {"travel",
+         {{"", ValidCommand::TravelHelp},
+          {"-p", ValidCommand::TravelPosition},
+          {"--position", ValidCommand::TravelPosition},
+          {"-d", ValidCommand::TravelDestination},
+          {"--destination", ValidCommand::TravelDestination},
+          {"-h", ValidCommand::TravelHelp},
+          {"--help", ValidCommand::TravelHelp}}}
+    };
+
 public:
     Game(); // Default constructor
 
@@ -98,7 +184,7 @@ public:
     /*
     The check function will check .
     */ 
-    ValidCommand checkCommand(const Command&) const;
+    ValidCommand getCommand(std::vector<std::string>);
 
     /*
     These are the UI commands. They will handle clearing and updating

@@ -42,7 +42,7 @@ private:
     // Plants ToDo: declare memory for plantsOnPlanet_;
     std::vector<Plants> plantsOnPlanet_; 
     std::array<double, 3> coords_;
-    vector<NPC> npcs_;
+    std::vector<NPC> npcs_;
 
 public:
     Planet();
@@ -61,7 +61,7 @@ public:
 
     std::string quickRow(double) const;
     std::string describe() const;
-    string getDifficultyIcon() const;
+    std::string getDifficultyIcon() const;
 
     static std::string biomeToString(Biome b);
 
@@ -75,10 +75,10 @@ public:
     Rock collectRockOnPlanet();  // returns the last rock added to the planet & deletes it from the planet
 
     // NPC related methods
-    const vector<NPC>& getNPCs() const { return npcs_; }
+    const std::vector<NPC>& getNPCs() const { return npcs_; }
     void populateNPCs(int count);
-    string listNPCs() const;
-    string talkToNPC(int index) const;
+    std::string listNPCs() const;
+    std::string talkToNPC(int index) const;
 
     // Plant methodsd to create the flora on a planet & to display the flora on a planet
     void populatePlantsOnPlanet();

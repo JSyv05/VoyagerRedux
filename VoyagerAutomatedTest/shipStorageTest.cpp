@@ -10,8 +10,8 @@ namespace VoyagerautomatedTest {
         TEST_METHOD(list_storage){
             Logger::WriteMessage("Testing to see if the ship will list out it's contents\n");
             Ship ship;
-            string not_expected = "";
-            string expected = ship.getShipStorage()->getDisplayString();
+            std::string not_expected = "";
+            std::string expected = ship.getShipStorage()->getDisplayString();
             Assert::IsTrue(not_expected != expected, L"ERR: List did not print properly");
             Logger::WriteMessage("Confirmed that the storage system is able to list its contents");
         }
@@ -22,12 +22,12 @@ namespace VoyagerautomatedTest {
                 "A dark, fine-grained volcanic rock.", "Volcanic",
                 10, "Iron", 5);
             Ship ship;
-            string before_storage = ship.getStorageContents();
-            string before_move = inventory.getDisplayString();
+            std::string before_storage = ship.getStorageContents();
+            std::string before_move = inventory.getDisplayString();
             inventory.addRock(rock);
             ship.addToShipStorage(inventory, 1);
-            string after_storage = ship.getStorageContents();
-            string after_move = inventory.getDisplayString();
+            std::string after_storage = ship.getStorageContents();
+            std::string after_move = inventory.getDisplayString();
             Assert::IsTrue( before_move != after_move, L"Rock was not removed from inventory");
             Logger::WriteMessage("Rock was removed from the player's inventory\n");
             Assert::IsTrue(before_storage != after_storage, L"Storage was not updated with new rock");

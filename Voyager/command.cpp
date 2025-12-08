@@ -6,8 +6,6 @@
 #include<string>
 #include<vector>
 
-using namespace std;
-
 /*
 The command class will be handling taking in inputs and breaking them up into tokens
 Then it will let the game read the command.
@@ -43,4 +41,4 @@ void Command::setInput() {
 Returns the tokenized command for the command interpreter
 */
 
-vector<string> Command::getInput() const{ return command; }
+std::vector<std::string> Command::getInput() const{ return command; }

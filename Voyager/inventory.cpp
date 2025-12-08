@@ -5,8 +5,6 @@
 #include <sstream>   
 #include <string>
 
-using namespace std;
-
 // Constructor
 Inventory::Inventory(int startCapacity) : maxCapacity(startCapacity) {
 }
@@ -21,11 +19,11 @@ bool Inventory::addRock(const Rock& rock) {
     }
 }
 
-bool Inventory::upgradeCapacity(int amount, string& message) {
+bool Inventory::upgradeCapacity(int amount, std::string& message) {
     if (amount > 0) {
         maxCapacity += amount;
-        message = "Inventory capacity upgraded by " + to_string(amount)
-            + "! New capacity: " + to_string(maxCapacity);
+        message = "Inventory capacity upgraded by " + std::to_string(amount)
+            + "! New capacity: " + std::to_string(maxCapacity);
         return true;
     }
     else {
@@ -45,11 +43,12 @@ void Inventory::autoSortRocks() {
     sort(rocks.begin(), rocks.end(), compareRocksByElement);
 }
 
-string Inventory::getDisplayString() const {
-    ostringstream oss;
-    oss << "\n--- INVENTORY (" << rocks.size() << "/" << maxCapacity << ") ---" << endl;
+std::string Inventory::getDisplayString() const {
+    std::ostringstream oss;
+    oss << "\n--- INVENTORY (" << rocks.size() << "/" << maxCapacity << ") ---"
+        << "\n";
     if (rocks.empty()) {
-        oss << "Inventory is empty." << endl;
+        oss << "Inventory is empty." << "\n";
         return oss.str();
     }
 
@@ -58,24 +57,25 @@ string Inventory::getDisplayString() const {
     const int valueWidth = 10;
     const int resourceWidth = 15;
 
-    oss << left
-        << setw(nameWidth) << "Rock Name"
-        << setw(typeWidth) << "Element"
-        << setw(valueWidth) << "Value"
-        << setw(resourceWidth) << "Resource"
-        << endl;
-    oss << string(nameWidth + typeWidth + valueWidth + resourceWidth, '-') << endl;
+    oss << std::left
+        << std::setw(nameWidth) << "Rock Name"
+        << std::setw(typeWidth) << "Element"
+        << std::setw(valueWidth) << "Value"
+        << std::setw(resourceWidth) << "Resource"
+        << "\n";
+    oss << std::string(nameWidth + typeWidth + valueWidth + resourceWidth, '-')
+        << "\n";
 
     // Use the getter methods from Rock class
     for (const Rock& rock : rocks) {
-        oss << left
-            << setw(nameWidth) << rock.getName()
-            << setw(typeWidth) << rock.getElementType() 
-            << setw(valueWidth) << rock.getValue()
-            << setw(resourceWidth) << (to_string(rock.getYieldAmount()) + " " + rock.getResourceYielded())
-            << endl;
+        oss << std::left
+            << std::setw(nameWidth) << rock.getName()
+            << std::setw(typeWidth) << rock.getElementType() 
+            << std::setw(valueWidth) << rock.getValue()
+            << std::setw(resourceWidth) << (std::to_string(rock.getYieldAmount()) + " " + rock.getResourceYielded())
+            << "\n";
     }
-    oss << "------------------------------------------------------------\n" << endl;
+    oss << "------------------------------------------------------------\n\n";
     return oss.str();
 }
 
@@ -83,29 +83,29 @@ Rock Inventory::getRockAtIndex(int index) {
     return rocks[index];
 }
 
-string Inventory::removeRock(const int& index) {
-    ostringstream oss;
+std::string Inventory::removeRock(const int& index) {
+    std::ostringstream oss;
     try {
-        if ((index) < 0 || (index) > rocks.size()) {
-            throw out_of_range("ERR: please input a valid index for the inventory system");
+        if (index < 0 || index > rocks.size()) {
+            throw std::out_of_range("ERR: please input a valid index for the inventory system");
         }
         Rock rock = getRockAtIndex(index);
         rocks.erase(rocks.begin() + index);
         oss << "Removed " << rock.getName();
         return oss.str();
     }
-    catch (const out_of_range& e) {
+    catch (const std::out_of_range& e) {
         oss << e.what();
         return oss.str(); 
     }    
 }
 
-string Inventory::inspectRock(const int& index) {
+std::string Inventory::inspectRock(const int& index) {
 
-    ostringstream oss;
+    std::ostringstream oss;
     try {
         if (index - 1 < 0 || index > rocks.size()) {
-            throw out_of_range("ERR: please input a valid index for the inventory system");
+            throw std::out_of_range("ERR: please input a valid index for the inventory system");
         }
         Rock rock = getRockAtIndex(index - 1);
         rocks.erase(rocks.begin() + index - 1);
@@ -113,7 +113,7 @@ string Inventory::inspectRock(const int& index) {
             << rock.getYieldAmount() << " " << rock.getResourceYielded() << ".";
         return oss.str();
     }
-    catch (const out_of_range& e) {
+    catch (const std::out_of_range& e) {
         oss << e.what();
         return oss.str();
     }

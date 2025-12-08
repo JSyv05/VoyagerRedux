@@ -10,29 +10,27 @@
 #include <sstream>
 #include<string>
 
-using namespace std;
-
 Planet::Planet() = default;
 
 // Planet Class Implementation
-Planet::Planet(string id, string name, double distanceAU, Biome biome, int loot, array<double, 3> coords)
+Planet::Planet(std::string id, std::string name, double distanceAU, Biome biome,
+               int loot, std::array<double, 3> coords)
     : id_(move(id)), name_(move(name)), distanceAU_(distanceAU), biome_(biome),
       lootLevel_(loot), coords_(coords) {}
 
-string Planet::quickRow(double fuelPerAU) const {
-    ostringstream ss;
-    ss << "[" << id_ << "] " << name_
+std::string Planet::quickRow(double fuelPerAU) const {
+    std::ostringstream oss;
+    oss << "[" << id_ << "] " << name_
         << " | " << biomeToString(biome_)
-        << " | Lv " << lootLevel_ << " " << getDifficultyIcon()
-        << " | " << fixed << setprecision(2) << distanceAU_ << " AU"
+        << " | Lv " << lootLevel_ << " " << getDifficultyIcon() << " | "
+        << std::fixed << std::setprecision(2) << distanceAU_ << " AU"
         << " | Pos: (" << coords_[0] << ", " << coords_[1] << ", " << coords_[2] << ")"
         << " | Fuel Cost: " << travelFuelCost(fuelPerAU);
-    return ss.str();
+    return oss.str();
 }
 
-string Planet::getDifficultyIcon() const
-{
-    string icon = "";
+std::string Planet::getDifficultyIcon() const {
+    std::string icon = "";
     int level = lootLevel_;
 
     // Cap at 10 stars
@@ -50,13 +48,14 @@ double Planet::travelFuelCost(double fuelPerAU) const {
     return distanceAU_ * fuelPerAU;
 }
 
-string Planet::describe() const {
-    ostringstream ss;
-    ss << "\n--- " << name_ << " ---\n";
-    ss << "Biome: " << biomeToString(biome_) << "\n";
-    ss << "Distance: " << fixed << setprecision(2) << distanceAU_ << " AU\n";
-    ss << "Loot Level: " << lootLevel_ << " " << getDifficultyIcon() << "\n";
-    ss << "Surface Conditions: "
+std::string Planet::describe() const {
+    std::ostringstream oss;
+    oss << "\n--- " << name_ << " ---\n";
+    oss << "Biome: " << biomeToString(biome_) << "\n";
+    oss << "Distance: " << std::fixed << std::setprecision(2) << distanceAU_
+        << " AU\n";
+    oss << "Loot Level: " << lootLevel_ << " " << getDifficultyIcon() << "\n";
+    oss << "Surface Conditions: "
         << (biome_ == Biome::Volcanic ? "Molten terrain and unstable geysers."
             : biome_ == Biome::Ocean ? "Vast seas with strong currents."
             : biome_ == Biome::Forest ? "Dense vegetation and humid climate."
@@ -66,12 +65,12 @@ string Planet::describe() const {
             : biome_ == Biome::Desert ? "Endless dunes and scorching heat."
             : "Barren and lifeless terrain.")
         << "\n";
-    return ss.str();
+    return oss.str();
 }
 
-void Planet::populateRocks(const vector<Rock>& allRocksInGame) {
+void Planet::populateRocks(const std::vector<Rock>& allRocksInGame) {
     // Get the planet's biome as a string
-    string biomeName = Planet::biomeToString(this->biome_);
+    std::string biomeName = Planet::biomeToString(this->biome_);
 
     // Clear any old rocks
     this->rocksOnPlanet_.clear();
@@ -86,7 +85,7 @@ void Planet::populateRocks(const vector<Rock>& allRocksInGame) {
     }
 }
 
-string Planet::biomeToString(Biome b) {
+std::string Planet::biomeToString(Biome b) {
     switch (b) {
     case Biome::Desert:
         return "Desert";
@@ -122,17 +121,17 @@ void Planet::populatePlantsOnPlanet() {
 }
 
 std::string Planet::listPlantsOnPlanet() {
-    ostringstream ss;
-    ss << "\n--- Plants on the planet ---\n";
+    std::ostringstream oss;
+    oss << "\n--- Plants on the planet ---\n";
     if (plantsOnPlanet_.empty()) {
-        ss << "No Flora found.\n";
+        oss << "No Flora found.\n";
     }
     else {
         for (Plants& plant : plantsOnPlanet_) {
-            ss << "  - " << plant.displayPlantDescription() << "\n";
+            oss << "  - " << plant.displayPlantDescription() << "\n";
         }
     }
-    return ss.str();
+    return oss.str();
 }
 
 // collectRockOnPlanet - returns a rock from those on the planet & deletes the rock
@@ -149,20 +148,20 @@ Rock Planet::collectRockOnPlanet() {
 }
 
 Planet PlanetGenerator::generatePlanet(
-    int index, const vector<array<double, 3>>& existingCoords) {
-    uniform_real_distribution<double> distAU(0.5, 10.0);
+    int index, const std::vector<std::array<double, 3>>& existingCoords) {
+    std::uniform_real_distribution<double> distAU(0.5, 10.0);
     double distance = distAU(rng);
 
-    uniform_int_distribution<int> distBiome(0, 7);
+    std::uniform_int_distribution<int> distBiome(0, 7);
     Biome biome = static_cast<Biome>(distBiome(rng));
 
-    uniform_int_distribution<int> distLoot(1, 10);
+    std::uniform_int_distribution<int> distLoot(1, 10);
     int lootLevel = distLoot(rng);
 
-    uniform_real_distribution<double> distCoord(-50.0, 50.0);
+    std::uniform_real_distribution<double> distCoord(-50.0, 50.0);
 
     // Ensure coordinate are unique
-    array<double, 3> coords;
+    std::array<double, 3> coords;
     bool unique = false;
     while (!unique) {
         coords = { distCoord(rng), distCoord(rng), distCoord(rng) };
@@ -182,9 +181,9 @@ Planet PlanetGenerator::generatePlanet(
         
     }
     // Create a name and ID
-    string name = generateName();
-    ostringstream id;
-    id << "P" << setw(3) << setfill('0') << index;
+    std::string name = generateName();
+    std::ostringstream id;
+    id << "P" << std::setw(3) << std::setfill('0') << index;
 
     // Plants ToDo: add call to create the flora on a planet
     Planet p(id.str(), name, distance, biome, lootLevel, coords);
@@ -194,7 +193,7 @@ Planet PlanetGenerator::generatePlanet(
 }
 
 
-string PlanetGenerator::generateName() {
+std::string PlanetGenerator::generateName() {
     std::vector<std::string> prefixes = { "RX", "M52", "NX", "LX",
                                          "KZ", "ULS", "AD" };
     std::vector<std::string> suffixes = { "-1b",   "-3c", "-Prime", "-Alpha",
@@ -209,68 +208,66 @@ string PlanetGenerator::generateName() {
     return name.str();
 }
 
-string Planet::listRocks() const {
-    ostringstream ss;
-    ss << "\n--- Harvestable Rocks ---\n";
+std::string Planet::listRocks() const {
+    std::ostringstream oss;
+    oss << "\n--- Harvestable Rocks ---\n";
     if (this->rocksOnPlanet_.empty()) {
-        ss << "No harvestable rocks found.\n";
+        oss << "No harvestable rocks found.\n";
     }
     else {
         for (const Rock& rock : this->rocksOnPlanet_) {
             // We can't use rock.inspect() because it prints to cout.
             // We'll build the string manually.
-            ss << "  - " << rock.getName() << " (" << rock.getElementType()
+            oss << "  - " << rock.getName() << " (" << rock.getElementType()
                 << ")\n";
         }
     }
-    return ss.str();
+    return oss.str();
 }
 
 //NPC-relate functions
 void Planet::populateNPCs(int count)
 {
     npcs_.clear();
-    vector<NPC> selected = pickNPCsForBiome(biome_, count);
+    std::vector<NPC> selected = pickNPCsForBiome(biome_, count);
     npcs_.insert(npcs_.end(), selected.begin(), selected.end());
 }
 
-string Planet::listNPCs() const
-{
-    ostringstream ss;
-    ss << "\n--- Local NPCs ---\n";
+std::string Planet::listNPCs() const {
+    std::ostringstream oss;
+    oss << "\n--- Local NPCs ---\n";
     if (npcs_.empty())
     {
-        ss << "No life forms or settlements detected.\n";
+        oss << "No life forms or settlements detected.\n";
     }
     else
     {
         for (int i = 0; i < (int)npcs_.size(); ++i)
         {
-            ss << "  " << npcs_[i].shortCard(i + 1) << "\n";
+            oss << "  " << npcs_[i].shortCard(i + 1) << "\n";
         }
     }
-    return ss.str();
+    return oss.str();
 }
 
-string Planet::talkToNPC(int index) const
-{
+std::string Planet::talkToNPC(int index) const {
     if (index < 1 || index >(int)npcs_.size())
         return "There is no one by that number.";
     return npcs_[index - 1].talkText();
 }
 
-vector<Planet> PlanetSystem::getPlanetList() const { return planetList; }
+std::vector<Planet> PlanetSystem::getPlanetList() const { return planetList; }
 Planet PlanetSystem::getPlanetAtIndex(int index) const {
     return planetList[index];
 }
 
 void PlanetSystem::generatePlanets(int number,
-    const vector<Rock>& allRocks) 
-{
+                                   const std::vector<Rock>& allRocks) {
+    Planet earth("NULL", "Earth", 0.0, Biome::Barren, 0, {0, 0, 0});
     PlanetGenerator generator;
     planetList.clear();
 
-    vector<array<double, 3>> fixedCoords =
+    std::vector<std::array<double, 3>> fixedCoords =
     {
         {9, 7, -5}, {10, 5, -2}, {20, -4, 6}, {30, 8, -10}, {40, 0, 5},
         {50, 12, -6}, {60, -8, 10}, {70, 4, -15}, {80, -12, 3}, {90, 7, 9},
@@ -279,7 +276,7 @@ void PlanetSystem::generatePlanets(int number,
         {180, -20, 8}, {190, 30, 0}
     };
     // Build difficulty (2 per level 1-10)
-    vector<int> difficultyLevels;
+    std::vector<int> difficultyLevels;
     difficultyLevels.reserve(20);
 
     for (int lvl = 1; lvl <= 10; ++lvl)
@@ -294,7 +291,7 @@ void PlanetSystem::generatePlanets(int number,
     difficultyLevels[2] = 2;
 
     // Shuffle the rest of the 17 level
-    mt19937 rng(random_device{}());
+    std::mt19937 rng(std::random_device{}());
     shuffle(difficultyLevels.begin() + 3, difficultyLevels.end(), rng);
 
     // Create all the planets

@@ -1,9 +1,8 @@
 #include"menu.h"
 #include <string>
 
-using namespace std;
- string Menu::setMenu() const {
-    string text = 
+ std::string Menu::setMenu() const {
+    std::string text = 
         "> Start Game\n"
         "> Load Game\n"
         "> Instructions\n"
@@ -14,8 +13,8 @@ using namespace std;
 
     return text;
 }
-string Menu::setInstructions() const {
-    string text = 
+std::string Menu::setInstructions() const {
+    std::string text = 
         "the goal of Voyager is to collect as many samples as\n"
         "possible, explore as many planets as possible, and then\n" 
         "return to Earth safely. You will be able to use commands\n"
@@ -37,8 +36,8 @@ string Menu::setInstructions() const {
     return text;
 }
 
-string Menu::setCredits() const{
-    string text = "Team Members:\n"
+std::string Menu::setCredits() const{
+    std::string text = "Team Members:\n"
                   "\tAlina Betances\n"
                   "\tAnthony Pinto\n"
                   "\tElias Reeves\n"
@@ -58,9 +57,9 @@ string Menu::setCredits() const{
     return text;
 }
 
-string Menu::setIntro() const{
+std::string Menu::setIntro() const{
 
-    string text = 
+    std::string text = 
         "VOYAGER PROGRAM: LOG ALPHA-01\n\n"
 
         "After decades of preparation, the Voyager Program has finally launched.\n"

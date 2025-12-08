@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 // Forward declaration from planet.h
 class Player;
 enum class Biome;
@@ -16,24 +14,24 @@ enum class NpcCategory { Person, Monster, Event };
 class NPC
 {
 private:
-    string name_;
-    string openingLine_;
-    string appearance_;
+    std::string name_;
+    std::string openingLine_;
+    std::string appearance_;
     NpcCategory category_;
     Biome biome_;
 
 public:
     NPC() = default;
-    NPC(string name, string line, string appearance, NpcCategory cat, Biome biome);
+    NPC(std::string name, std::string line, std::string appearance, NpcCategory cat, Biome biome);
 
-    string getType() const;
-    string getName() const;
-    string getOpeningLine() const;
-    string getAppearance() const;
+    std::string getType() const;
+    std::string getName() const;
+    std::string getOpeningLine() const;
+    std::string getAppearance() const;
     Biome getBiome() const;
 
-    string shortCard(int index) const;
-    string talkText() const;
+    std::string shortCard(int index) const;
+    std::string talkText() const;
 };
 
 // Monster Class (Derived from NPC)
@@ -44,7 +42,7 @@ protected:
     int attackPower_;
 
 public:
-    Monster(string name, string line, string appearance, NpcCategory cat, Biome biome, int hp, int atk);
+    Monster(std::string name, std::string line, std::string appearance, NpcCategory cat, Biome biome, int hp, int atk);
     
     //getters 
     int getHealth() const { return health_; }
@@ -53,15 +51,15 @@ public:
     int dealDamage() const;
     void takeDamage(int dmg);
     bool isDead() const;
-    string attackPlayer(Player& player);
+    std::string attackPlayer(Player& player);
 };
 
 // Returns all NPCs and monsters in the game
-const vector<NPC>& getAllNPCs();
-const vector<Monster>& getAllMonsters();
+const std::vector<NPC>& getAllNPCs();
+const std::vector<Monster>& getAllMonsters();
 
 // Picks N NPCs by biome (no repeats)
-vector<NPC> pickNPCsForBiome(Biome biome, int count);
+std::vector<NPC> pickNPCsForBiome(Biome biome, int count);
 Monster createMonsterForBiomeAndDifficulty(Biome biome, int difficulty); //difficulty is your lootLevel
 
 

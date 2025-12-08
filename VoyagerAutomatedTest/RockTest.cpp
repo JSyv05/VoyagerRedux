@@ -23,7 +23,7 @@ namespace VoyagerAutomatedTest
 			const int NUM_PLANETS_TO_CREATE = 10;
 			Planet planetArray[NUM_PLANETS_TO_CREATE];
 			PlanetGenerator generator;
-			vector<Rock> allGameRocks = createMasterRockList();
+			std::vector<Rock> allGameRocks = createMasterRockList();
 			//     Planet(std::string id, std::string name, double distanceAU, Biome biome,int loot, std::array<double, 3>)
 			// Planet PlanetGenerator::generatePlanet(int index, const vector<array<double, 3>>& existingCoords) {
 			// verify that I can create 5 planets & will see rocks on each planet

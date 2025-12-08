@@ -8,8 +8,6 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
-
 // Constructor
 Ship::Ship()
     : coordinates{ 0.0, 0.0, 0.0 },
@@ -17,13 +15,13 @@ Ship::Ship()
     currentPlanet("NULL", "EARTH", 0.0, Biome::Barren, 0, { 0,0,0 }),
     radar(3),
     fuel(100.0),
-    maxFuel(100.0),
+    maxFuel(100),
     storage(new Inventory(200))
 {
 }
 // Helper functions - Distance and fuel calcutations
-static double calcDistanceAU(const array<double, 3>& a, const array<double, 3>& b)
-{
+static double calcDistanceAU(const std::array<double, 3>& a,
+                             const std::array<double, 3>& b) {
     double dx = a[0] - b[0];
     double dy = a[1] - b[1];
     double dz = a[2] - b[2];
@@ -39,7 +37,7 @@ Inventory* Ship::getShipStorage() {
     return storage;
 }
 
-string Ship::getStorageContents() {
+std::string Ship::getStorageContents() {
     return getShipStorage()->getDisplayString();
 }
 
@@ -50,10 +48,10 @@ void Ship::addToShipStorage(Inventory& inventory, int index) {
 }
 
 // Coord setter and getter
-void Ship::setCoordinates(const array<double, 3>& coords) {
+void Ship::setCoordinates(const std::array<double, 3>& coords) {
     coordinates = coords;
 }
-array<double, 3> Ship::getCoordinates() const { return coordinates; }
+std::array<double, 3> Ship::getCoordinates() const { return coordinates; }
 
 // Planet - return handle to the actual planet, so can modify it (e.g. removing rocks)
 
@@ -91,12 +89,11 @@ void Ship::subtractFromFuel(double x) {
 }
 
 // Scans for nerby planets
-string Ship::getNearbyPlanet(const vector<Planet>& planet_vector)
-{
+std::string Ship::getNearbyPlanet(const std::vector<Planet>& planet_vector) {
     const double fuelPerAU = 2.5; 
 
     //  Build distance list from ship to every planet 
-    vector<pair<double, const Planet*>> planetDistances;
+    std::vector<std::pair<double, const Planet*>> planetDistances;
     planetDistances.reserve(planet_vector.size());
 
     for (const auto& p : planet_vector) {
@@ -109,7 +106,7 @@ string Ship::getNearbyPlanet(const vector<Planet>& planet_vector)
         [](const auto& a, const auto& b) { return a.first < b.first; });
 
     //  Remember last scan for cooldown 
-    vector<Planet> previousScan = lastScannedPlanets;
+    std::vector<Planet> previousScan = lastScannedPlanets;
     lastScannedPlanets.clear();
 
     // Compare planets by coordinates (unique in system)
@@ -125,7 +122,7 @@ string Ship::getNearbyPlanet(const vector<Planet>& planet_vector)
         };
 
     // Selected planets for this scan: (distance, planet*)
-    vector<pair<double, const Planet*>> selected;
+    std::vector<std::pair<double, const Planet*>> selected;
 
     auto inSelected = [&](const Planet& p) {
         return any_of(selected.begin(), selected.end(),
@@ -181,7 +178,7 @@ string Ship::getNearbyPlanet(const vector<Planet>& planet_vector)
     }
 
     // Build display from selected
-    ostringstream display;
+    std::ostringstream display;
     display << "--Nearest Planets Detected--\n\n";
 
     for (size_t i = 0; i < selected.size(); ++i) {
@@ -206,9 +203,9 @@ string Ship::getNearbyPlanet(const vector<Planet>& planet_vector)
 }
 
 // Travel to planet, dock on planet, displays name and description
-string Ship::travelToPlanet(int choice) {
+std::string Ship::travelToPlanet(int choice) {
     if (choice > 3 || choice < 1) {
-        throw out_of_range("ERR: index is out of range");
+        throw std::out_of_range("ERR: index is out of range");
     }
     Planet destination = lastScannedPlanets[choice - 1];
     const auto& destCoords = destination.getCoordinates();
@@ -222,7 +219,7 @@ string Ship::travelToPlanet(int choice) {
     coordinates = destCoords;
     currentPlanet = destination;
     fuel -= fuelCost;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "Traveling to " << currentPlanet.getName() << "...\n";
     msg << "Distance: " << std::fixed << std::setprecision(2) << distanceAU << " AU\n";
     msg << "Fuel Used: " << fuelCost << "\n\n";
@@ -234,8 +231,8 @@ return msg.str();
 }
 
 // Return to ship. Plus undock and hover
-string Ship::returnToShip() {
-    ostringstream msg;
+std::string Ship::returnToShip() {
+    std::ostringstream msg;
     msg << "You return to your ship and begin pre-flight checks";
     msg << "The ship is now ready for takeoff.\n\n";
     msg << "\n(Type scan -p' to return to scan for nearby planets";
@@ -243,8 +240,8 @@ string Ship::returnToShip() {
     return msg.str();
 }
 
-string Ship::shipExit() {
-    ostringstream msg;
+std::string Ship::shipExit() {
+    std::ostringstream msg;
     msg << "You step out onto the surface of " << currentPlanet.getName()
         << ".\n\n";
     msg << currentPlanet.describe();

@@ -4,13 +4,12 @@
 #include <algorithm>
 #include <random>
 #include <sstream>
-using namespace std;
 
 // NPC Implementation
-NPC::NPC(string name, string line, string appearance, NpcCategory cat, Biome biome)
+NPC::NPC(std::string name, std::string line, std::string appearance, NpcCategory cat, Biome biome)
     : name_(move(name)), openingLine_(move(line)), appearance_(move(appearance)), category_(cat), biome_(biome) {}
 
-string NPC::getType() const
+std::string NPC::getType() const
 {
     switch (category_)
     {
@@ -21,23 +20,22 @@ string NPC::getType() const
     }
 }
 
-string NPC::getName() const { return name_; }
-string NPC::getOpeningLine() const { return openingLine_; }
-string NPC::getAppearance() const { return appearance_; }
+std::string NPC::getName() const { return name_; }
+std::string NPC::getOpeningLine() const { return openingLine_; }
+std::string NPC::getAppearance() const { return appearance_; }
 Biome NPC::getBiome() const { return biome_; }
 
-string NPC::shortCard(int index) const
-{
-    return "(" + to_string(index) + ") " + name_ + " | " + getType();
+std::string NPC::shortCard(int index) const {
+    return "(" + std::to_string(index) + ") " + name_ + " | " + getType();
 }
 
-string NPC::talkText() const
-{
+std::string NPC::talkText() const {
     return name_ + " says: " + openingLine_ + "\nAppearance: " + appearance_ + "\n";
 }
 
 // Monster Implementation
-Monster::Monster(string name, string line, string appearance, NpcCategory cat, Biome biome, int hp, int atk)
+Monster::Monster(std::string name, std::string line, std::string appearance,
+                 NpcCategory cat, Biome biome, int hp, int atk)
     : NPC(name, line, appearance, NpcCategory::Monster, biome), health_(hp), attackPower_(atk) {}
 
 int Monster::dealDamage() const { return attackPower_; }
@@ -54,12 +52,11 @@ bool Monster::isDead() const
     return health_ <= 0;
 }
 
-string Monster::attackPlayer(Player& player)
-{
+std::string Monster::attackPlayer(Player& player) {
     int dmg = dealDamage();
     player.takeDamage(dmg);
 
-    ostringstream ss;
+    std::ostringstream ss;
     ss << getName() << " attacks you for " << dmg << " damage!\n"
         << "Your health is now " << player.getPlayerHealth() << ".";
     return ss.str();
@@ -113,8 +110,7 @@ void inputCounter(int& counter, int threshold, Monster& monster, Player& player,
 
 
 // NPC DATA (2 per Biome for testing)
-static vector<NPC> ALL_NPCS =
-{
+const static std::vector<NPC> ALL_NPCS = {
     // Forests noncombat NPCs
     {"Gorm Garnersson",
      "Greetings outlander, I am Gorm of house Garnersson. What brings you to this realm?",
@@ -196,11 +192,10 @@ static vector<NPC> ALL_NPCS =
             NpcCategory::Person, Biome::Desert},
 };
 
-const vector<NPC>& getAllNPCs() { return ALL_NPCS; }
+const std::vector<NPC>& getAllNPCs() { return ALL_NPCS; }
 
-vector<NPC> pickNPCsForBiome(Biome biome, int count)
-{
-    vector<NPC> pool;
+std::vector<NPC> pickNPCsForBiome(Biome biome, int count) {
+    std::vector<NPC> pool;
     for (auto& npc : ALL_NPCS)
         if (npc.getBiome() == biome)
             pool.push_back(npc);
@@ -208,7 +203,7 @@ vector<NPC> pickNPCsForBiome(Biome biome, int count)
     if (pool.empty())
         return {};
 
-    static mt19937 rng{ random_device{}() };
+    static std::mt19937 rng{std::random_device{}()};
     shuffle(pool.begin(), pool.end(), rng);
 
     if ((int)pool.size() > count)
@@ -218,8 +213,7 @@ vector<NPC> pickNPCsForBiome(Biome biome, int count)
 }
 
 // All the monsters objects
-static vector<Monster> All_MONSTERS =
-{
+static std::vector<Monster> All_MONSTERS = {
     // Forests Monster
     Monster("Tree Monster", "THE FOREST HUNGERS!", "A towering walking tree...", 
             NpcCategory::Monster, Biome::Forest, 40, 10),   // HP = 40 and Attack = 10
@@ -255,8 +249,7 @@ static vector<Monster> All_MONSTERS =
 };
 
 // Return all templates
-const vector<Monster>& getAllMonsters()
-{
+const std::vector<Monster>& getAllMonsters() {
     return All_MONSTERS;
 }
 

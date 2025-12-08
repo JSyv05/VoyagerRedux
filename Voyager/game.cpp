@@ -15,12 +15,12 @@
 #include <array>
 #include <iostream>
 #include <sstream>
+#include <map>
 #include <memory>
 #include <vector>
 
-using namespace std;
-
-vector<Rock> createMasterRockList();   // declare rock creation routine, a global in the rock class
+std::vector<Rock> createMasterRockList(); // declare rock creation routine, a
+                                          // global in the rock class
 
 // Function implementation for Game class
 
@@ -34,9 +34,9 @@ Game::Game()
 Setters and getters for all outputs and game state flags
 */
 
-void Game::setArtOutput(const string& art) { art_output = art; }
-void Game::setBodyOutput(const string& body) { body_output = body; }
-void Game::setErrorOutput(const string& error) { error_output = error; }
+void Game::setArtOutput(const std::string& art) { art_output = art; }
+void Game::setBodyOutput(const std::string& body) { body_output = body; }
+void Game::setErrorOutput(const std::string& error) { error_output = error; }
 
 void Game::setMenuFlag(const bool& flag) { onMenu = flag; }
 void Game::setShipFlag(const bool& flag) { onShip = flag; }
@@ -45,9 +45,9 @@ void Game::setGameOverFlag(const bool& flag) { gameOver = flag; }
 void Game::setNextFlag(const bool& flag) { next = flag; }
 void Game::setSavedFlag(const bool& flag) { saved = flag; }
 
-string Game::getArtOutput() const { return art_output; }
-string Game::getBodyOutput() const { return body_output; }
-string Game::getErrorOutput() const { return error_output; }
+std::string Game::getArtOutput() const { return art_output; }
+std::string Game::getBodyOutput() const { return body_output; }
+std::string Game::getErrorOutput() const { return error_output; }
 
 bool Game::getMenuFlag() const { return onMenu; }
 bool Game::getShipFlag() const { return onShip; }
@@ -89,120 +89,18 @@ else:
 
 Idea 2: break apart checkCommand into checkCommand by Flag
 */
-Game::ValidCommand Game::checkCommand(const Command& command) const {
-    const auto& input = command.getInput();
-    if (input.empty() && !getNextFlag()) {
-        return ValidCommand::Error;
-    }
-    else if (input.size() >= 1 && input[0] == "attack" && getPlanetFlag())
-    {
-        return ValidCommand::Attack;
-    }
-    else if (input.size() >= 1 && input[0] == "collect" &&
-        getPlanetFlag()) {
-        return ValidCommand::Collect;
-    }
-    else if (input.size() == 1 && input[0] == "credits" && getMenuFlag()) {
-        return ValidCommand::Credits;
-    }
-    else if (input.size() >= 2 && input[0] == "drop" && getPlanetFlag()) {
-        return ValidCommand::Drop;
-    }
-    else if (input.size() == 1 && input[0] == "quit" && getMenuFlag()) {
-        return ValidCommand::Quit;
-    }
-    else if (input.size() == 1 && input[0] == "help" && !(getMenuFlag() || getNextFlag())) {
-        return ValidCommand::Help;
-    }
-    else if (input.size() >= 3 && input[0] == "inspect" && input[1] == "rock") {
-        return ValidCommand::InspectRock;
-    }
-    else if (input.size() == 1 && (input[0] == "inventory" || input[0] == "inv") && !(getMenuFlag() || getNextFlag())) {
-        return ValidCommand::Inventory;
-    }
-    else if (input.size() == 1 && input[0] == "instructions" &&
-        getMenuFlag()) {
-        return ValidCommand::Instructions;
-    }
-    else if (((input.size() == 1 && input[0] == "back") ||
-        (input.size() == 1 && input[0] == "menu") ||
-        (input.size() >= 2 && input[0] == "main" &&
-            input[1] == "menu")) &&
-        getMenuFlag()) {
-        return ValidCommand::MainMenu;
-    }
-    else if (((input.size() == 1 && input[0] == "load") ||
-        (input.size() >= 2 && input[0] == "load" &&
-            input[1] == "game")) &&
-        getMenuFlag()) {
-        return ValidCommand::Load;
-    }
-    else if ((input.empty() || (input.size() == 1 && input[0] == "next")) &&
-        getNextFlag()) {
-        return ValidCommand::Next;
-    }
-    else if (input.size() == 3 && input[0] == "return" && input[1] == "to" &&
-        input[2] == "ship" &&
-        getPlanetFlag()) {
-        return ValidCommand::ReturnToShip;
-    }
-    else if ((input.size() == 1 && input[0] == "save") ||
-        (input.size() >= 2 && input[0] == "save" && input[1] == "game") &&
-        !getMenuFlag()) {
-        return ValidCommand::Save;
-    }
-    else if (input.size() == 1 && input[0] == "sneak" && getPlanetFlag())
-    {
-        return ValidCommand::Sneak;
-    }
-    else if (input.size() >= 1 && input[0] == "scan" && !(getMenuFlag() && getNextFlag())) {
-        return ValidCommand::Scan;
-    }
-    else if (input.size() == 2 && input[0] == "exit" &&
-             input[1] == "ship" && getShipFlag()) {
-        return ValidCommand::Exit;
-    }
-    else if (input.size() == 1 && input[0] == "quit" && getMenuFlag()) {
-        return ValidCommand::Quit;
-    }
-    else if (input.size() == 3 && input[0] == "exchange" && getShipFlag()) {
-        return ValidCommand::Exchange;
-    }
-    else if (((input.size() == 1 && input[0] == "menu") ||
-        (input.size() >= 2 && input[0] == "main" &&
-            input[1] == "menu")) &&
-        getShipFlag() && getSavedFlag()) {
-        return ValidCommand::ShipMainMenu;
-    }
-    else if (((input.size() == 1 && input[0] == "start") ||
-        (input.size() >= 2 && input[0] == "start" &&
-            input[1] == "game")) &&
-        getMenuFlag()) {
-        return ValidCommand::Start;
-    }
-    else if (input.size() == 2 && input[0] == "store" && getShipFlag()) {
-        return ValidCommand::Store;
-    }
-    else if (input.size() == 1 && input[0] == "storage" && getShipFlag()) {
-        return ValidCommand::Storage;
-    }
-    else if (input.size() >= 1 && input[0] == "travel" &&
-             getShipFlag()) {
-        return ValidCommand::Travel;
-    }
-    else if (input.size() == 3 && input[0] == "interact" && getPlanetFlag())
-    {
-        return ValidCommand::Talk;
-    }
-    else if (input.size() == 1 && input[0] == "health")
-    {
-        return ValidCommand::Health;
-    }
-    else if (input.size() == 1 && input[0] == "fuel" && getShipFlag()) {
-        return ValidCommand::Fuel;
-    }
-    else {
-        return ValidCommand::Error;
+
+Game::ValidCommand Game::getCommand(std::vector<std::string> input) {
+    try {
+        const auto& inner_command_map = commandMap.at(input[0]);
+        if (input.size() == 1) {
+            return inner_command_map.at("");
+        }
+        else {
+            return inner_command_map.at(input[1]);
+        }
+    } catch (std::out_of_range& e) {
+        return ValidCommand::UNKNOWN;
     }
 }
 
@@ -227,29 +125,35 @@ that as one output.
 */
 
 void Game::displayOutput() const {
-    ostringstream output;
+    std::ostringstream output;
     output << getArtOutput() << "\n\n" << getBodyOutput() << "\n\n" <<
                     getErrorOutput();
 
     if (getErrorOutput() != "") {
         output << "\n\n";
     }
-    cout << output.str();
+    std::cout << output.str();
 }
 
 void Game::saveGame() {}
 
 //Helper function to throw an error for travel -p
 
-void checkInputSizeLessThanFive(const vector<string>& in_vector) {
-    if (in_vector.size() < 5) {
-        throw out_of_range("ERR: Not enough arguments for coordinate");
+void checkInputSizeLessThanN(const std::vector<std::string>& in_vector,
+                             size_t n) {
+    if (in_vector.size() < n) {
+        throw std::out_of_range("ERR: Not enough arguments for command");
     }
 }
 
-// Helper function to get art based on planet type
+void checkIndexIsInRange(int i, size_t size) {
+    if (i - 1 < 0 || i > size) {
+        throw std::out_of_range("ERR: Index is out of range");
+    }
+}
+    // Helper function to get art based on planet type
 
-string getArtForTravelToPlanet(Biome biome, Art art) {
+std::string getArtForTravelToPlanet(Biome biome, Art art) {
     switch (biome) {
     case Biome::Desert:
         return art.setArtToDesert();
@@ -287,7 +191,7 @@ void Game::gameLoop() {
     ExchangeStation exchange;
 
     PlanetSystem planet_system;
-    vector<Rock> all_game_rocks = createMasterRockList();
+    std::vector<Rock> all_game_rocks = createMasterRockList();
 
     Inventory player_inventory(20);  
 
@@ -296,7 +200,7 @@ void Game::gameLoop() {
     const int MONSTER_ATTACK_THRESHOLD = 5; // how many commands before auto-attack
 
     // New monster that persits while you're on the planet 
-    unique_ptr<Monster> activeMonster;
+    std::unique_ptr<Monster> activeMonster;
 
     setMenuFlag(true);
     setArtOutput(art.setArtToTitle());
@@ -320,196 +224,337 @@ void Game::gameLoop() {
         */
         const auto& input = command.getInput();
 
-        ValidCommand passed_command = checkCommand(command);
-        switch (passed_command) {
-        case ValidCommand::Attack:
-        {
-            if (!getPlanetFlag())
-            {
-                setErrorOutput("You can only attack while on a planet.");
+        ValidCommand passed_command = getCommand(input);
+
+        if (getMenuFlag()) {
+            switch (passed_command) {
+            case ValidCommand::Credits:
+                setBodyOutput(menu.setCredits());
+                break;
+
+            case ValidCommand::Instructions:
+                setBodyOutput(menu.setInstructions());
+                break;
+
+            case ValidCommand::Load:
+                break;
+
+            case ValidCommand::MainMenu:
+                setBodyOutput(menu.setMenu());
+                break;
+
+            case ValidCommand::Next: {
+                setMenuFlag(false);
+                setNextFlag(false);
+                setShipFlag(true);
+
+                std::string output =
+                    "The view of space is unlike anything you have seen "
+                    "before.\nYou feel a sense of calm wash over you.\n(use "
+                    "scan "
+                    "-p to scan for nearby planets)";
+                setArtOutput(art.setArtToShip());
+                setBodyOutput(output);
+            } break;
+
+            case ValidCommand::Quit:
+                setGameOverFlag(true);
+                break;
+
+            case ValidCommand::Start:
+                setNextFlag(true);
+                setBodyOutput(menu.setIntro());
+                setArtOutput(art.setArtToAguila());
+                planet_system.generatePlanets(20, all_game_rocks);
                 break;
             }
+        }
 
-            // Lazily create a monster for this planet if we don't have one yet
-            if (!activeMonster)
-            {
-                Planet& active_planet = ship.getCurrentPlanet();
-                Biome biome = active_planet.getBiome();
-                int difficulty = active_planet.getLootLevel();   // lootLevel_ is your difficulty
+        else if (getShipFlag()) {
+            switch (passed_command) {
+            case ValidCommand::ExchangeFuel:
+                try {
+                    double refuel =
+                        exchange.exchangeLootPointForFuel(stoi(input[2]));
+                    ship.setFuel(refuel);
+                    std::ostringstream oss;
+                    oss << "Refueled " << refuel
+                        << " units. Remaining LP: " << exchange.getLootPoint();
+                    setErrorOutput(oss.str());
+                } catch (const std::invalid_argument& e) {
+                    std::string error = "ERR: Invalid argument";
+                    setErrorOutput(error);
+                }
+                break;
 
-                activeMonster = make_unique<Monster> (createMonsterForBiomeAndDifficulty(biome, difficulty));
+            case ValidCommand::ExchangeHealth:
+                try {
+                    double heal =
+                        exchange.exchangeLootPointForHealth(stoi(input[2]));
+                    player.gainHealth(heal);
+                    std::ostringstream oss;
+                    oss << "Healed " << heal
+                        << " hit points. Remaining LP: " << exchange.getLootPoint();
+                    setErrorOutput(oss.str());
+                } catch (const std::invalid_argument& e) {
+                    std::string error = "ERR: Invalid argument";
+                    setErrorOutput(error);
+                }
+                break;
+
+            case ValidCommand::ExchangeHelp:
+                setBodyOutput(help.getExchangeHelp());
+                break;
+
+            case ValidCommand::Exit:
+                setBodyOutput(ship.shipExit());
+                setShipFlag(false);
+                setPlanetFlag(true);
+                break;
+
+            case ValidCommand::Fuel: {
+                std::ostringstream oss;
+                oss << "Current fuel level: " << ship.getFuel();
+                setErrorOutput(oss.str());
+            } break;
+
+            case ValidCommand::Health: {
+                std::ostringstream oss;
+                oss << "Player health: " << player.getPlayerHealth();
+                setErrorOutput(oss.str());
             }
 
-            Monster& monster = *activeMonster;
+            case ValidCommand::Help:
+                setBodyOutput(help.getGeneralHelp());
+                break;
 
-            ostringstream summary;
+            case ValidCommand::Inventory:
+                player_inventory.autoSortRocks(); // Sort before displaying
+                setBodyOutput(player_inventory.getDisplayString());
+                break;
 
-            // Player's attack 
-            int hpBefore = monster.getHealth();
-            int dmgToMonster = player.dealDamage();
-            monster.takeDamage(dmgToMonster);
-            int hpAfter = monster.getHealth();
+            case ValidCommand::ScanPlanets:
+                setBodyOutput(ship.getNearbyPlanet(planet_system.getPlanetList()));
+                break;
 
-            summary << "You attack " << monster.getName()
-                << " for " << dmgToMonster << " damage.\n"
-                << monster.getName() << " HP: " << hpAfter << "\n";
+            case ValidCommand::ScanHelp:
+                setBodyOutput(help.getScanHelp());
+                break;
 
-            // Did you kill it with this hit?
-            if (monster.isDead())
-            {
-                summary << "\nYou defeated " << monster.getName() << "!";
-                activeMonster.reset();           // no monster until a new one is spawned
-                playerIsSneaking = false;        // clear sneak
+            case ValidCommand::Storage:
+                setBodyOutput(ship.getStorageContents());
+                break;
+            case ValidCommand::StoreRock: {
+                try {
+                    int index = stoi(input[1]) - 1;
+                    if (index < 0 ||
+                        index > player_inventory.getCurrentSize()) {
+                        throw std::out_of_range("ERR: index is out of range");
+                    }
+                    ship.addToShipStorage(player_inventory, stoi(input[1]));
+                    std::string body_string =
+                        ship.getShipStorage()->getDisplayString();
+                    setBodyOutput(body_string);
+                } catch (const std::out_of_range& e) {
+                    setErrorOutput(e.what());
+                }
+            } break;
+
+            case ValidCommand::TravelDestination:
+                try {
+                    checkInputSizeLessThanN(input, 3);
+                    int index = stoi(input[2]);
+                    setBodyOutput(ship.travelToPlanet(index));
+                    setArtOutput(getArtForTravelToPlanet(
+                        ship.getCurrentPlanet().getBiome(), art));
+                } catch (const std::out_of_range& e) {
+                    std::string error = e.what();
+                    setErrorOutput(error);
+                } catch (const std::invalid_argument& e) {
+                    std::ostringstream oss;
+                    oss << "ERR: Bad input in argument (" << e.what() << ")";
+                    setErrorOutput(oss.str());
+                }
+                break;
+
+            case ValidCommand::TravelPosition:
+                try {
+                    checkInputSizeLessThanN(input, 5);
+                    std::array<double, 3> position = {
+                        stod(input[2]), stod(input[3]), stod(input[4])};
+                    ship.setCoordinates(position);
+                    std::ostringstream output;
+                    output << "set coordinates to (" << position[0] << ", "
+                           << position[1] << ", " << position[2] << ")";
+                    setBodyOutput(output.str());
+                } catch (const std::out_of_range& e) {
+                    std::string error = e.what();
+                    setErrorOutput(error);
+                }
+                break;
+
+            case ValidCommand::TravelHelp:
+                setBodyOutput(help.getTravelHelp());
+                break;
+            default:
+                std::string error = "ERR: Please enter a valid input";
+                setErrorOutput(error);
+                break;
+            }
+        }
+
+        else if (getPlanetFlag()) {
+            switch (passed_command) {
+            case ValidCommand::Attack: {
+                // Lazily create a monster for this planet if we don't have one
+                // yet
+                if (!activeMonster) {
+                    Planet& active_planet = ship.getCurrentPlanet();
+                    Biome biome = active_planet.getBiome();
+                    int difficulty =
+                        active_planet
+                            .getLootLevel(); // lootLevel_ is your difficulty
+
+                    activeMonster = std::make_unique<Monster>(
+                        createMonsterForBiomeAndDifficulty(biome, difficulty));
+                }
+
+                Monster& monster = *activeMonster;
+
+                std::ostringstream summary;
+
+                // Player's attack
+                int dmgToMonster = player.dealDamage();
+                monster.takeDamage(dmgToMonster);
+                int hpAfter = monster.getHealth();
+
+                summary << "You attack " << monster.getName() << " for "
+                        << dmgToMonster << " damage.\n"
+                        << monster.getName() << " HP: " << hpAfter << "\n";
+
+                // Did you kill it with this hit?
+                if (monster.isDead()) {
+                    summary << "\nYou defeated " << monster.getName() << "!";
+                    activeMonster
+                        .reset(); // no monster until a new one is spawned
+                    playerIsSneaking = false; // clear sneak
+                    setBodyOutput(summary.str());
+                    setErrorOutput("");
+                    break;
+                }
+
+                // --- Monster counter-attack (unless it was a sneak attack) ---
+                if (playerIsSneaking) {
+                    // Sneak gives a free hit – no counter this turn
+                    summary << monster.getName()
+                            << " is caught off guard and can't react!";
+                    playerIsSneaking = false; // consume the sneak
+                }
+                else {
+                    // Monster hits back once
+                    summary << monster.attackPlayer(player) << "\n";
+
+                    if (player.isDead()) {
+                        summary << "You have been defeated by "
+                                << monster.getName() << "...";
+                        setGameOverFlag(true);
+                    }
+                }
+
                 setBodyOutput(summary.str());
                 setErrorOutput("");
-                break;
-            }
+            } break;
+        
+            case ValidCommand::Collect: {
+                Planet& active_planet =
+                    ship.getCurrentPlanet(); // will be mutating the rocks on
+                                             // the planet in this code
 
-            // --- Monster counter-attack (unless it was a sneak attack) ---
-            if (playerIsSneaking)
-            {
-                // Sneak gives a free hit – no counter this turn
-                summary << monster.getName()
-                    << " is caught off guard and can't react!";
-                playerIsSneaking = false;   // consume the sneak
-            }
-            else
-            {
-                // Monster hits back once
-                summary << monster.attackPlayer(player) << "\n";
+                // Rock Refactor (LV) - deleted code to decide rock to collect
+                // based on the biome
+                //    Now take a rock from the planet - note - will remove the
+                //    rock from the planet after collection If there are no
+                //    rocks on the planet, collectRock... will return element
+                //    type = "Generic"
+                Rock rock = active_planet.collectRockOnPlanet();
 
-                if (player.isDead())
-                {
-                    summary << "You have been defeated by "
-                        << monster.getName() << "...";
-                    setGameOverFlag(true);
+                std::string inventory_message;
+
+                if (rock.getElementType() != "Generic") {
+                    // Try to add the rock, which fills inventoryMessage
+                    if (player_inventory.addRock(rock)) {
+                        inventory_message = "Added " + rock.getName() +
+                                            " to inventory.\n(Type 'inventory' "
+                                            "to view your inventory)";
+                        setBodyOutput(inventory_message);
+                        setErrorOutput("");
+                    }
+                    else { // problem - couldn't add the rock to the inventory,
+                           // but rock already deleted
+                        // could ToDo possibly add a new planet method to add a
+                        // rock and call it to replace the rock note - should
+                        // create the method regardless - more intuitive and
+                        // scalable
+                        inventory_message =
+                            "ERR: Inventory is full! Cannot add " +
+                            rock.getName() + ".";
+                        setBodyOutput("");
+                        setErrorOutput(inventory_message);
+                    }
                 }
-            }
-
-            setBodyOutput(summary.str());
-            setErrorOutput("");
-        }
-        break;
-        case ValidCommand::Collect: {
-            Planet& active_planet = ship.getCurrentPlanet();  // will be mutating the rocks on the planet in this code
-
-            // Rock Refactor (LV) - deleted code to decide rock to collect based on the biome
-            //    Now take a rock from the planet - note - will remove the rock from the planet after collection
-            //    If there are no rocks on the planet, collectRock... will return element type = "Generic"
-            Rock rock = active_planet.collectRockOnPlanet();
-
-            string inventory_message;
-
-            if (rock.getElementType() != "Generic") {
-                // Try to add the rock, which fills inventoryMessage
-                if (player_inventory.addRock(rock)) {
-                    inventory_message = "Added " + rock.getName() + " to inventory.\n(Type 'inventory' to view your inventory)";
-                    setBodyOutput(inventory_message);
-                    setErrorOutput("");
+                else { // no rocks on the planet to collect
+                    setBodyOutput(
+                        "You scan the area but find no valuable rocks of "
+                        "this planet's type.");
                 }
-                else {   // problem - couldn't add the rock to the inventory, but rock already deleted
-                    // could ToDo possibly add a new planet method to add a rock and call it to replace the rock
-                    // note - should create the method regardless - more intuitive and scalable
-                    inventory_message = "ERR: Inventory is full! Cannot add " + rock.getName() + ".";
-                    setBodyOutput("");
-                    setErrorOutput(inventory_message);
+            } break;
+
+            case ValidCommand::Health: {
+                std::ostringstream oss;
+                oss << "Player health: " << player.getPlayerHealth();
+                setErrorOutput(oss.str());
+            }
+
+            case ValidCommand::Help:
+                setBodyOutput(help.getGeneralHelp());
+                break;
+
+            case ValidCommand::InspectRock: { // Added curly braces for scope
+                if (input.size() < 3) {
+                    setErrorOutput("ERR: What rock do you want to inspect? "
+                                   "(e.g., inspect rock Basalt Shard)");
+                    break;
                 }
-            }
-            else {  // no rocks on the planet to collect
-                setBodyOutput("You scan the area but find no valuable rocks of "
-                              "this planet's type.");
-            }
-        }
-            break;
 
-        case ValidCommand::Credits:
-            setBodyOutput(menu.setCredits());
-            break;
+                // inspectRock returns the full string, success or error
+                std::string inspect_result =
+                    player_inventory.inspectRock(stoi(input[3]));
+            } break;
 
-        case ValidCommand::Drop:
-        { // Added curly braces to create a new scope for variables
-            if (input.size() < 3) {
-                setErrorOutput("ERR: Enter the index of the rock you want to drop");
+            case ValidCommand::Interact: {
+                int npc_index = 0;
+                try {
+                    npc_index = stoi(input[2]);
+                } catch (...) {
+                    npc_index = 0;
+                }
+                std::ostringstream output;
+                output << ship.getCurrentPlanet().talkToNPC(npc_index) << "\n";
+
+                setBodyOutput(output.str());
+            } break;
+
+            case ValidCommand::Inventory:
+                player_inventory.autoSortRocks(); // Sort before displaying
+                setBodyOutput(player_inventory.getDisplayString());
                 break;
-            }
-
-            string inventory_message = player_inventory.removeRock(stoi(input[3]) - 1);
-            setBodyOutput(inventory_message);
-        }
-        break;
-
-        case ValidCommand::Error: {
-            string error = "ERR: Please enter a valid input";
-            setErrorOutput(error);
-        }
-        break;
-
-        case ValidCommand::Quit:
-            setGameOverFlag(true);
-            break;
-
-        case ValidCommand::Help:
-            setBodyOutput(help.getGeneralHelp());
-            break;
-        case ValidCommand::InspectRock:
-        { // Added curly braces for scope
-            if (input.size() < 3) {
-                setErrorOutput("ERR: What rock do you want to inspect? (e.g., inspect rock Basalt Shard)");
+            case ValidCommand::ReturnToShip:
+                setPlanetFlag(false);
+                setShipFlag(true);
+                setBodyOutput(ship.returnToShip());
+                setArtOutput(art.setArtToShip());
                 break;
-            }
-
-            // inspectRock returns the full string, success or error
-            string inspect_result = player_inventory.inspectRock(stoi(input[3]));
-        }
-        break;
-
-        case ValidCommand::Inventory:
-            player_inventory.autoSortRocks(); // Sort before displaying
-            setBodyOutput(player_inventory.getDisplayString());
-            break;
-
-        case ValidCommand::Instructions:
-            setBodyOutput(menu.setInstructions());
-            break;
-
-        case ValidCommand::Load:
-            break;
-
-        case ValidCommand::MainMenu:
-            setBodyOutput(menu.setMenu());
-            break;
-
-        case ValidCommand::Next: {
-            setMenuFlag(false);
-            setNextFlag(false);
-            setShipFlag(true);
-
-            string output =
-                "The view of space is unlike anything you have seen "
-                "before.\nYou feel a sense of calm wash over you.\n(use scan "
-                "-p to scan for nearby planets)";
-            setArtOutput(art.setArtToShip());
-            setBodyOutput(output);
-        }
-            break;
-
-        case ValidCommand::ReturnToShip:
-            setPlanetFlag(false);
-            setShipFlag(true);
-            setBodyOutput(ship.returnToShip());
-            setArtOutput(art.setArtToShip());
-            break;
-
-        case ValidCommand::Save:
-            saveGame();
-            break;
-
-        case ValidCommand::Scan:
-            if ((input.size() == 1) ||
-                (input[1] == "-h" || input[1] == "--help")) {
-                setBodyOutput(help.getScanHelp());
-            }
-            else if ((input[1] == "-a" || input[1] == "--area") && getPlanetFlag()) {
+            case ValidCommand::ScanArea: {
                 Planet& active_planet = ship.getCurrentPlanet();
                 setBodyOutput(active_planet.describe() +
                               active_planet.listRocks() +
@@ -517,184 +562,34 @@ void Game::gameLoop() {
                               active_planet.listNPCs());
                 setErrorOutput("Scan complete. Resources listed.\n\n");
             }
-            else if ((input[1] == "-p" || input[1] == "--planets") && getShipFlag()) {
-                setBodyOutput(ship.getNearbyPlanet(planet_system.getPlanetList()));
-            }
-            else {
-                string error =
-                    "ERR: Please input a valid flag (try 'scan --help')";
+                break;
+
+            case ValidCommand::Sneak: {
+                playerIsSneaking = true;
+                setBodyOutput("You move quietly, preparing a sneak attack...");
+                setErrorOutput("");
+            } break;
+
+            default:
+                std::string error = "ERR: Please enter a valid input";
                 setErrorOutput(error);
-            }
-            break;
-        case ValidCommand::Sneak:
-        {
-            if (!getPlanetFlag())
-            {
                 break;
             }
-
-            playerIsSneaking = true;
-            setBodyOutput("You move quietly, preparing a sneak attack...");
-            setErrorOutput("");
         }
-        break;
-        case ValidCommand::Exit:
-            setBodyOutput(ship.shipExit());
-            setShipFlag(false);
-            setPlanetFlag(true);
-            break;
 
-        case ValidCommand::Exchange:
-            try {
-                if (input[1] == "fuel") {
-                    double refuel =
-                        exchange.exchangeLootPointForFuel(stoi(input[2]));
-                    ship.setFuel(refuel);
-                    ostringstream oss;
-                    oss << "Refueled " << refuel
-                        << " units. Remaining LP: " << exchange.getLootPoint();
-                    setErrorOutput(oss.str());
-                }
-                else if (input[1] == "health") {
-                    double heal =
-                        exchange.exchangeLootPointForHealth(stoi(input[2]));
-                    player.gainHealth(heal);
-                    ostringstream oss;
-                    oss << "Healed " << heal
-                        << " units. Remaining LP: " << exchange.getLootPoint();
-                    setErrorOutput(oss.str());
-                }
-                else if (input[1] == "sample") {
-                    exchange.exchangeSampleForLootPoint(ship.getShipStorage(),
-                                                        stoi(input[2]));
-                    ostringstream oss;
-                    oss << "Exchanged! Gained " << exchange.getLootPoint()
-                        << " points!";
-                    setBodyOutput(ship.getStorageContents());
-                    setErrorOutput(oss.str());
-                }
-                else {
-                    setErrorOutput("ERR: Please select either fuel or health "
-                                   "'exchange fuel 15'");
-                }
-            } catch (const invalid_argument& e) {
-                string error = "ERR: Invalid argument";
-                setErrorOutput(error);
-            }
-            break;
-
-        case ValidCommand::ShipMainMenu:
-            setBodyOutput(menu.setMenu());
-            setMenuFlag(true);
-            setShipFlag(false);
-            break;
-
-        case ValidCommand::Start:
-            setMenuFlag(false);
-            setNextFlag(true);
-            setBodyOutput(menu.setIntro());
-            setArtOutput(art.setArtToAguila());
-            planet_system.generatePlanets(20, all_game_rocks);
-            break;
-
-        case ValidCommand::Travel:
-            try {
-                if ((input.size() == 1) ||
-                    (input[1] == "-h" || input[1] == "--help")) {
-                    setBodyOutput(help.getTravelHelp());
-                }
-                else if (input[1] == "-d" || input[1] == "--destination") {
-                    int index = stoi(input[2]);
-                    setBodyOutput(ship.travelToPlanet(index));
-                    setArtOutput(getArtForTravelToPlanet(
-                        ship.getCurrentPlanet().getBiome(), art));
-
-                }
-                else if (input[1] == "-p" || input[1] == "--position") {
-                    checkInputSizeLessThanFive(input);
-                    array<double, 3> position = {stod(input[2]), stod(input[3]), stod(input[4])};
-                    ship.setCoordinates(position);
-                    ostringstream output;
-                    output << "set coordinates to (" << position[0] << ", "
-                        << position[1] << ", " << position[2] << ")";
-                    setBodyOutput(output.str());
-                }
-                if (ship.getFuel() <= 0) {
-                    setGameOverFlag(true);
-                    setBodyOutput("Your ship ran out of fuel, you drift off "
-                                  "into nothingness and freeze to death");
-                }
-                else {
-                    string error = "ERR: Please pass a valid flag (try 'travel --help')";
-                    setErrorOutput(error);
-                }
-            }
-            catch (const invalid_argument& e) {
-                string error = "ERR: Invalid argument";
-                setErrorOutput(error);
-            }
-            catch (const out_of_range& e) {
-                string error = e.what();
-                setErrorOutput(error);
-            }
-            break;
-
-        case ValidCommand::Talk:
-        {
-            int npc_index = 0;
-            try { npc_index = stoi(input[2]); }
-            catch (...) { npc_index = 0; }
-            ostringstream output;
-            output << ship.getCurrentPlanet().talkToNPC(npc_index) << "\n";
-
-            setBodyOutput(output.str());
-        } 
-        break;
-        case ValidCommand::Health:
-        {
-            string output = "Player health: " + to_string(player.getPlayerHealth());
-            setErrorOutput(output);
-        }
-        break;
-        case ValidCommand::Store: {
-            try {
-                int index = stoi(input[1]) - 1;
-                if (index < 0 || index > player_inventory.getCurrentSize()) {
-                    throw out_of_range("ERR: index is out of range");
-                }
-                ship.addToShipStorage(player_inventory, stoi(input[1]));
-                string body_string = ship.getShipStorage()->getDisplayString();
-                setBodyOutput(body_string);
-            } catch (const out_of_range& e) {
-                setErrorOutput(e.what());
-            }
-        }
-        break;
-
-        case ValidCommand::Storage:
-            setBodyOutput(ship.getStorageContents());
-            break;
-        case ValidCommand::Fuel:
-        {
-            ostringstream oss;
-            oss << "Current fuel level: " << ship.getFuel();
-            setErrorOutput(oss.str());
-        } break;
-        default:
-            string error = "ERR: Please enter a valid input";
+        if (passed_command == ValidCommand::UNKNOWN) {
+            std::string error = "ERR: Please input a valid command.";
             setErrorOutput(error);
-            break;
         }
-        if (getPlanetFlag())
-        {
+
+        if (getPlanetFlag()) {
             bool countsTowardsAggro = false;
 
-            switch (passed_command)
-            {
+            switch (passed_command) {
             case ValidCommand::Collect:
-            case ValidCommand::Scan:
+            case ValidCommand::ScanArea:
             case ValidCommand::Inventory:
-            case ValidCommand::Talk:
+            case ValidCommand::Interact:
             case ValidCommand::Health:
                 countsTowardsAggro = true;
                 break;
@@ -702,50 +597,45 @@ void Game::gameLoop() {
                 break;
             }
 
-            if (countsTowardsAggro)
-            {
+            if (countsTowardsAggro) {
                 ++planetCommandCounter;
-                if (planetCommandCounter >= MONSTER_ATTACK_THRESHOLD)
-                {
+                if (planetCommandCounter >= MONSTER_ATTACK_THRESHOLD) {
                     planetCommandCounter = 0; // reset
 
                     // Make sure we have a monster for this planet
-                    if (!activeMonster)
-                    {
+                    if (!activeMonster) {
                         Planet& active_planet = ship.getCurrentPlanet();
                         Biome biome = active_planet.getBiome();
                         int difficulty = active_planet.getLootLevel();
 
                         activeMonster = std::make_unique<Monster>(
-                            createMonsterForBiomeAndDifficulty(biome, difficulty));
+                            createMonsterForBiomeAndDifficulty(biome,
+                                                               difficulty));
                     }
 
                     Monster& monster = *activeMonster;
 
-                    if (!monster.isDead())
-                    {
-                        ostringstream autoMsg;
+                    if (!monster.isDead()) {
+                        std::ostringstream oss;
                         // Keep whatever body text we already had this turn
-                        autoMsg << getBodyOutput();
+                        oss << getBodyOutput();
                         if (!getBodyOutput().empty())
-                            autoMsg << "\n\n";
+                            oss << "\n\n";
 
-                        autoMsg << monster.attackPlayer(player) << "\n"
+                        oss << monster.attackPlayer(player) << "\n"
                             << "(Lingering too long has drawn its attention!)";
 
-                        if (player.isDead())
-                        {
-                            autoMsg << "\nYou have been slain by "
+                        if (player.isDead()) {
+                            oss << "\nYou have been slain by "
                                 << monster.getName() << "...";
                             setGameOverFlag(true);
                         }
 
-                        setBodyOutput(autoMsg.str());
+                        setBodyOutput(oss.str());
                     }
                 }
             }
         }
-
         clearScreen(); // Clear screen before start of next loop iteration
     }
 }

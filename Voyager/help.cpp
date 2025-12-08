@@ -1,16 +1,14 @@
 #include "help.h"
 #include <string>
 
-using namespace std;
-
-string Help::getGeneralHelp() const {
-    string text = getScanHelp() + "\n\n" + getTravelHelp() + "\n\n" +
+std::string Help::getGeneralHelp() const {
+    std::string text = getScanHelp() + "\n\n" + getTravelHelp() + "\n\n" +
                   getExchangeHelp() + "\n\n" + getStoreHelp();
     return text;
 }
 
-string Help::getScanHelp() const {
-    string text =
+std::string Help::getScanHelp() const {
+    std::string text =
         "scan - a general purpose tool for scanning the surrounding area\n\n"
         "Usage:\n"
         "\tscan [options]\n"
@@ -20,8 +18,8 @@ string Help::getScanHelp() const {
     return text;
 }
 
-string Help::getTravelHelp() const {
-    string text =
+std::string Help::getTravelHelp() const {
+    std::string text =
         "travel - a navigation tool for traversing the galaxy\n\n"
         "Usage:\n"
         "\tscan [options] <args>\n"
@@ -31,8 +29,8 @@ string Help::getTravelHelp() const {
     return text;
 }
 
-string Help::getExchangeHelp() const {
-    string text = "exchange - trade in points and samples for resources\n\n"
+std::string Help::getExchangeHelp() const {
+    std::string text = "exchange - trade in points and samples for resources\n\n"
                   "Usage:\n"
                   "\texchange [options] <args>\n"
                   "Options:\n"
@@ -42,8 +40,8 @@ string Help::getExchangeHelp() const {
                   "\t[health] <points>\t exhcange your points to heal";
     return text;
 }
-string Help::getStoreHelp() const {
-    string text = "store - move items from your inventory to storage\n\n"
+std::string Help::getStoreHelp() const {
+    std::string text = "store - move items from your inventory to storage\n\n"
                   "Usage:\n"
                   "\tstore <index>";
     return text;

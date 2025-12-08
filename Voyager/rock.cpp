@@ -3,13 +3,10 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 // global function to create rocks - bad!!  ToDo - refactor this
 // Function implementation for Rock class
-vector<Rock> createMasterRockList() {
-    cout << "Creating master rock list from code..." << endl;
-    vector<Rock> all_rocks;
+std::vector<Rock> createMasterRockList() {
+    std::vector<Rock> all_rocks;
 
     // Rock(name, description, elementType, value, resourceYielded, yieldAmount)
     all_rocks.push_back(Rock("Basalt Shard",
@@ -29,8 +26,6 @@ vector<Rock> createMasterRockList() {
     all_rocks.push_back(Rock("Barren Stone", "A simple, useless rock.", "Barren",
         0, "Gravel", 1));
 
-    cout << "Successfully created " << all_rocks.size() << " rocks."
-        << endl;
     return all_rocks;
 }
 

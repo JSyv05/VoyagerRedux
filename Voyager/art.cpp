@@ -2,10 +2,9 @@
 
 #include "art.h"
 
-using namespace std;
 
-string Art::setArtToShip() const {
-    string art= R"(
+std::string Art::setArtToShip() const {
+    std::string art= R"(
               `           '              '    . '
         .         .          ,_.-``--.                         .
    .                  ..   ,/   ;' /V `.         +    .
@@ -21,7 +20,7 @@ _-"   .       '  +  .   \_,,_.-`    .               \ | /   .
     return art;
 }
 
-string Art::setArtToCity() const { string art= R"(
+std::string Art::setArtToCity() const { std::string art= R"(
 ::::8888888888888888888888P   ____.------.____   488888888888888:::888
 ::::88888888888888888P __.--""    _._         ""--.__ 4888888888:::888
 :::::888888888888P _.-"        .-~ | ~-.             "-._ 488888:::888
@@ -44,7 +43,7 @@ string Art::setArtToCity() const { string art= R"(
     return art;
 }
 
-string Art::setArtToForest() const { string art= R"(                                                            ---\=,__,>,_`-.     |
+std::string Art::setArtToForest() const { std::string art= R"(                                                            ---\=,__,>,_`-.     |
        :  |  `"""V#######,,_ `-  ""##################' --z--;" /_/  `. `.   |
           |          `/"""".`|`|| } }|.""""""""|"""""  --'//`/'  `    \  '. |
     :          :      |:     ||   |  |  :   :  |   :   ,_\---_\._   :  `.\ |/
@@ -61,7 +60,7 @@ string Art::setArtToForest() const { string art= R"(                            
     return art;
 }
 
-string Art::setArtToDesert() const { string art= R"(
+std::string Art::setArtToDesert() const { std::string art= R"(
     .    _    +     .  ______   .          .
  (      /|\      .    |      \      .   +
      . |||||     _    | |   | | ||         .
@@ -81,8 +80,8 @@ _  ^      .  -    . \.|)";
     return art;
 }
 
-string Art::setArtToGasGiant() const {
-    string art= R"(              .
+std::string Art::setArtToGasGiant() const {
+    std::string art= R"(              .
                					
               |					
      .               /				
@@ -104,8 +103,8 @@ string Art::setArtToGasGiant() const {
     return art;
 }
 
-string Art::setArtToIce() const {
-    string art= R"(
+std::string Art::setArtToIce() const {
+    std::string art= R"(
                        .-.      / \        _
            ^^         /   \    /^./\__   _/ \
          _        .--'\/\_ \__/.      \ /    \  ^^  ___
@@ -123,7 +122,7 @@ string Art::setArtToIce() const {
     return art;
 }
 
-string Art::setArtToOcean() const { string art= R"(                               _
+std::string Art::setArtToOcean() const { std::string art= R"(                               _
                  ~        ~               ~~
           ~~          ~~          ~~   ~      ~~
      ~~    ~   ~~  __...--------...__ ~~~     ~~
@@ -138,8 +137,8 @@ string Art::setArtToOcean() const { string art= R"(                             
     return art;
 }
 
-string Art::setArtToVolcano() const {
-    string art= R"(
+std::string Art::setArtToVolcano() const {
+    std::string art= R"(
                   xl""``""lx
                  X8X::::::X8X
                  8X::dX::d8X8    X
@@ -154,8 +153,8 @@ string Art::setArtToVolcano() const {
     return art;
 }
 
-string Art::setArtToWasteLand() const {
-    string art= R"(
+std::string Art::setArtToWasteLand() const {
+    std::string art= R"(
 
 
 
@@ -167,8 +166,8 @@ string Art::setArtToWasteLand() const {
     return art;
 }
 
-string Art::setArtToTitle() const {
-    string art= R"(
+std::string Art::setArtToTitle() const {
+    std::string art= R"(
                 :::     ::: :::::::: :::   :::  :::     :::::::: :::::::::::::::::::             
                :+:     :+::+:    :+::+:   :+::+: :+:  :+:    :+::+:       :+:    :+:              
               +:+     +:++:+    +:+ +:+ +:++:+   +:+ +:+       +:+       +:+    +:+               
@@ -182,8 +181,8 @@ ____ _  _ ____ ____ _   _ ____ ____ ____ ____ _ ____ _ ____ ____ _  _ ____ ___ _
     return art;
 }
 
-string Art::setArtToAguila() const {
-    string art= R"(
+std::string Art::setArtToAguila() const {
+    std::string art= R"(
    <<Grand Legion of Humanity>>
         .---.        .---.
        /     \  __  /     \
