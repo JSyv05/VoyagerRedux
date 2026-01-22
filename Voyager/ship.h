@@ -32,7 +32,7 @@ public:
     int getRadar() const;
 
     // Fuel
-    void setFuel(double);
+    void refuel(double);
     void subtractFromFuel(double);
     double getFuel() const;
     double getMaxFuel() const;
@@ -44,7 +44,7 @@ public:
     std::string getStorageContents();
     void addToShipStorage(Inventory& inventory, int index);
     std::string travelToPlanet(int choice); // Travel/Dock at chosen planet
-    std::string returnToShip();               // Returns tp ship
-    std::string shipExit();                   // Exits ship
+    std::string returnToShip() const;               // Returns tp ship
+    std::string shipExit() const;                   // Exits ship
 };
 #endif

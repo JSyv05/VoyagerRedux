@@ -11,9 +11,7 @@ class monster;
  */
 
  // constructor - create a player with initial health
-Player::Player() {
-	// empty constructor - player health initialized in the header
-}
+Player::Player() = default;
 //add two method 
 //bool iscrritable
 //method to decrease
@@ -38,7 +36,7 @@ void Player::takeDamage(int dmg)
 		playerHealth = 0;
 }
 
-void Player::gainHealth(int heal) {
+void Player::gainHealth(double heal) {
     if (playerHealth + heal >= maxHealth) {
         playerHealth = maxHealth;
 	}

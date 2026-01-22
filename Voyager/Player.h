@@ -12,7 +12,7 @@ public:
 	//Combat
 	int dealDamage() const;
 	void takeDamage(int dmg);
-    void gainHealth(int heal);
+    void gainHealth(double heal);
 	bool isDead() const;
 	void attackMonster(class Monster& monster) const;
 };

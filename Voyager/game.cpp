@@ -1,7 +1,7 @@
 // User created libraries
 #include "art.h"
 #include "game.h"
-#include "Rock.h"
+#include "rock.h"
 #include "command.h"
 #include "menu.h"
 #include "help.h"
@@ -56,49 +56,18 @@ bool Game::getGameOverFlag() const { return gameOver; }
 bool Game::getNextFlag() const { return next; }
 bool Game::getSavedFlag() const { return saved; }
 
-/*
-Each if statement checks the command size, command content, and
-then the game state, and will return the corresponding command.
-These will be used in the game loop to manage core logic behind
-commands
-*/
-
-// TODO: refactor checkCommand to use a map instead of if/else-if block
-
-/*
-Rather than have if/else-if statements, use a map with input[0] as the key, with the values being arrays of size 2,
-the first value being a default return value if there is no flag, and the second being a map for flag return values.
-
-string manip to store input[0] and input[1] as string variables command and flag
-
-using namespace ValidCommand
-map = {
-    "collect": [Collect, null]
-    "scan": [
-        Scan, {
-            "-a": scanAreaForSamples,
-            "-p": scanForPlanets
-        }
-    ]
-}
-
-if flag?:
-    return map[command][1][flag]
-else: 
-    return map[command][0]
-
-Idea 2: break apart checkCommand into checkCommand by Flag
-*/
-
 Game::ValidCommand Game::getCommand(std::vector<std::string> input) {
     try {
-        const auto& inner_command_map = commandMap.at(input[0]);
+        std::string command = input[0];
+        std::string option;
+        const auto& inner_command_map = commandMap.at(command);
         if (input.size() == 1) {
-            return inner_command_map.at("");
+            option = "";
         }
         else {
-            return inner_command_map.at(input[1]);
+            option = input[1];
         }
+        return inner_command_map.at(option);
     } catch (std::out_of_range& e) {
         return ValidCommand::UNKNOWN;
     }
@@ -126,28 +95,26 @@ that as one output.
 
 void Game::displayOutput() const {
     std::ostringstream output;
-    output << getArtOutput() << "\n\n" << getBodyOutput() << "\n\n" <<
-                    getErrorOutput();
+    output << art_output << "\n\n" << body_output << "\n\n" <<
+                    error_output;
 
-    if (getErrorOutput() != "") {
+    if (error_output != "") {
         output << "\n\n";
     }
     std::cout << output.str();
 }
 
-void Game::saveGame() {}
+//Helper function to throw an error if an argument is shorter than the minimum required
 
-//Helper function to throw an error for travel -p
-
-void checkInputSizeLessThanN(const std::vector<std::string>& in_vector,
+void checkInputSizeLessThanN(const std::vector<std::string>& vector,
                              size_t n) {
-    if (in_vector.size() < n) {
+    if (vector.size() < n) {
         throw std::out_of_range("ERR: Not enough arguments for command");
     }
 }
 
-void checkIndexIsInRange(int i, size_t size) {
-    if (i - 1 < 0 || i > size) {
+void checkIndexIsInRange(int index, int size) {
+    if (index - 1 < 0 || index - 1 > size) {
         throw std::out_of_range("ERR: Index is out of range");
     }
 }
@@ -193,20 +160,20 @@ void Game::gameLoop() {
     PlanetSystem planet_system;
     std::vector<Rock> all_game_rocks = createMasterRockList();
 
-    Inventory player_inventory(20);  
+    Inventory inventory(20);  
 
     int planetCommandCounter = 0; // counter inputs while on a planet
     bool playerIsSneaking = false;  // set by sneak command
     const int MONSTER_ATTACK_THRESHOLD = 5; // how many commands before auto-attack
 
     // New monster that persits while you're on the planet 
-    std::unique_ptr<Monster> activeMonster;
+    std::unique_ptr<Monster> active_monster;
 
-    setMenuFlag(true);
+    onMenu = true;
     setArtOutput(art.setArtToTitle());
     setBodyOutput(menu.setMenu());
 
-    while (!getGameOverFlag()) {
+    while (!gameOver) {
 
         /*
         Display the main menu initially and then take input.
@@ -226,8 +193,8 @@ void Game::gameLoop() {
 
         ValidCommand passed_command = getCommand(input);
 
-        if (getMenuFlag()) {
-            switch (passed_command) {
+        if (onMenu) {
+             switch (passed_command) {
             case ValidCommand::Credits:
                 setBodyOutput(menu.setCredits());
                 break;
@@ -270,13 +237,15 @@ void Game::gameLoop() {
             }
         }
 
-        else if (getShipFlag()) {
+        else if (onShip) {
             switch (passed_command) {
             case ValidCommand::ExchangeFuel:
                 try {
+                    checkInputSizeLessThanN(input, 3);
+                    int points_to_exchange = stoi(input[2]);
                     double refuel =
-                        exchange.exchangeLootPointForFuel(stoi(input[2]));
-                    ship.setFuel(refuel);
+                        exchange.exchangeLootPointForFuel(points_to_exchange);
+                    ship.refuel(refuel);
                     std::ostringstream oss;
                     oss << "Refueled " << refuel
                         << " units. Remaining LP: " << exchange.getLootPoint();
@@ -284,13 +253,18 @@ void Game::gameLoop() {
                 } catch (const std::invalid_argument& e) {
                     std::string error = "ERR: Invalid argument";
                     setErrorOutput(error);
+                } catch (const std::out_of_range& e) {
+                    std::string error = e.what();
+                    setErrorOutput(error);
                 }
                 break;
 
             case ValidCommand::ExchangeHealth:
                 try {
+                    checkInputSizeLessThanN(input, 3);
+                    int points_to_exchange = stoi(input[2]);
                     double heal =
-                        exchange.exchangeLootPointForHealth(stoi(input[2]));
+                        exchange.exchangeLootPointForHealth(points_to_exchange);
                     player.gainHealth(heal);
                     std::ostringstream oss;
                     oss << "Healed " << heal
@@ -322,15 +296,14 @@ void Game::gameLoop() {
                 std::ostringstream oss;
                 oss << "Player health: " << player.getPlayerHealth();
                 setErrorOutput(oss.str());
-            }
-
+            } break;
             case ValidCommand::Help:
                 setBodyOutput(help.getGeneralHelp());
                 break;
 
             case ValidCommand::Inventory:
-                player_inventory.autoSortRocks(); // Sort before displaying
-                setBodyOutput(player_inventory.getDisplayString());
+                inventory.autoSortRocks(); // Sort before displaying
+                setBodyOutput(inventory.getDisplayString());
                 break;
 
             case ValidCommand::ScanPlanets:
@@ -346,12 +319,10 @@ void Game::gameLoop() {
                 break;
             case ValidCommand::StoreRock: {
                 try {
-                    int index = stoi(input[1]) - 1;
-                    if (index < 0 ||
-                        index > player_inventory.getCurrentSize()) {
-                        throw std::out_of_range("ERR: index is out of range");
-                    }
-                    ship.addToShipStorage(player_inventory, stoi(input[1]));
+                    int index = stoi(input[1]);
+                    checkIndexIsInRange(index,
+                                        inventory.getCurrentSize());
+                    ship.addToShipStorage(inventory, index);
                     std::string body_string =
                         ship.getShipStorage()->getDisplayString();
                     setBodyOutput(body_string);
@@ -364,6 +335,7 @@ void Game::gameLoop() {
                 try {
                     checkInputSizeLessThanN(input, 3);
                     int index = stoi(input[2]);
+                    checkIndexIsInRange(index, 3);
                     setBodyOutput(ship.travelToPlanet(index));
                     setArtOutput(getArtForTravelToPlanet(
                         ship.getCurrentPlanet().getBiome(), art));
@@ -380,12 +352,14 @@ void Game::gameLoop() {
             case ValidCommand::TravelPosition:
                 try {
                     checkInputSizeLessThanN(input, 5);
-                    std::array<double, 3> position = {
-                        stod(input[2]), stod(input[3]), stod(input[4])};
+                    double x_pos = stod(input[2]);
+                    double y_pos = stod(input[3]);
+                    double z_pos = stod(input[4]);
+                    std::array<double, 3> position = {x_pos, y_pos, z_pos};
                     ship.setCoordinates(position);
                     std::ostringstream output;
-                    output << "set coordinates to (" << position[0] << ", "
-                           << position[1] << ", " << position[2] << ")";
+                    output << "set coordinates to (" << x_pos << ", "
+                           << y_pos << ", " << z_pos << ")";
                     setBodyOutput(output.str());
                 } catch (const std::out_of_range& e) {
                     std::string error = e.what();
@@ -403,39 +377,39 @@ void Game::gameLoop() {
             }
         }
 
-        else if (getPlanetFlag()) {
+        else if (onPlanet) {
             switch (passed_command) {
             case ValidCommand::Attack: {
                 // Lazily create a monster for this planet if we don't have one
                 // yet
-                if (!activeMonster) {
+                if (!active_monster) {
                     Planet& active_planet = ship.getCurrentPlanet();
                     Biome biome = active_planet.getBiome();
                     int difficulty =
                         active_planet
                             .getLootLevel(); // lootLevel_ is your difficulty
 
-                    activeMonster = std::make_unique<Monster>(
+                    active_monster = std::make_unique<Monster>(
                         createMonsterForBiomeAndDifficulty(biome, difficulty));
                 }
 
-                Monster& monster = *activeMonster;
+                Monster& monster = *active_monster;
 
                 std::ostringstream summary;
 
                 // Player's attack
-                int dmgToMonster = player.dealDamage();
-                monster.takeDamage(dmgToMonster);
+                int dmg_to_monster = player.dealDamage();
+                monster.takeDamage(dmg_to_monster);
                 int hpAfter = monster.getHealth();
 
                 summary << "You attack " << monster.getName() << " for "
-                        << dmgToMonster << " damage.\n"
+                        << dmg_to_monster << " damage.\n"
                         << monster.getName() << " HP: " << hpAfter << "\n";
 
                 // Did you kill it with this hit?
                 if (monster.isDead()) {
                     summary << "\nYou defeated " << monster.getName() << "!";
-                    activeMonster
+                    active_monster
                         .reset(); // no monster until a new one is spawned
                     playerIsSneaking = false; // clear sneak
                     setBodyOutput(summary.str());
@@ -482,7 +456,7 @@ void Game::gameLoop() {
 
                 if (rock.getElementType() != "Generic") {
                     // Try to add the rock, which fills inventoryMessage
-                    if (player_inventory.addRock(rock)) {
+                    if (inventory.addRock(rock)) {
                         inventory_message = "Added " + rock.getName() +
                                             " to inventory.\n(Type 'inventory' "
                                             "to view your inventory)";
@@ -513,7 +487,7 @@ void Game::gameLoop() {
                 std::ostringstream oss;
                 oss << "Player health: " << player.getPlayerHealth();
                 setErrorOutput(oss.str());
-            }
+            } break;
 
             case ValidCommand::Help:
                 setBodyOutput(help.getGeneralHelp());
@@ -526,13 +500,14 @@ void Game::gameLoop() {
                     break;
                 }
 
+                int rock_index = stoi(input[3]);
+
                 // inspectRock returns the full string, success or error
-                std::string inspect_result =
-                    player_inventory.inspectRock(stoi(input[3]));
+                std::string inspect_result = inventory.inspectRock(rock_index);
             } break;
 
             case ValidCommand::Interact: {
-                int npc_index = 0;
+                int npc_index;
                 try {
                     npc_index = stoi(input[2]);
                 } catch (...) {
@@ -545,8 +520,8 @@ void Game::gameLoop() {
             } break;
 
             case ValidCommand::Inventory:
-                player_inventory.autoSortRocks(); // Sort before displaying
-                setBodyOutput(player_inventory.getDisplayString());
+                inventory.autoSortRocks(); // Sort before displaying
+                setBodyOutput(inventory.getDisplayString());
                 break;
             case ValidCommand::ReturnToShip:
                 setPlanetFlag(false);
@@ -603,17 +578,17 @@ void Game::gameLoop() {
                     planetCommandCounter = 0; // reset
 
                     // Make sure we have a monster for this planet
-                    if (!activeMonster) {
+                    if (!active_monster) {
                         Planet& active_planet = ship.getCurrentPlanet();
                         Biome biome = active_planet.getBiome();
                         int difficulty = active_planet.getLootLevel();
 
-                        activeMonster = std::make_unique<Monster>(
+                        active_monster = std::make_unique<Monster>(
                             createMonsterForBiomeAndDifficulty(biome,
                                                                difficulty));
                     }
 
-                    Monster& monster = *activeMonster;
+                    Monster& monster = *active_monster;
 
                     if (!monster.isDead()) {
                         std::ostringstream oss;

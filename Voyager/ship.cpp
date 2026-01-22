@@ -71,7 +71,7 @@ double Ship::getMaxFuel() const{
     return maxFuel;
 }
 
-void Ship::setFuel(double x) {
+void Ship::refuel(double x) {
     if (fuel + x >= maxFuel) {
         fuel = maxFuel;
     }
@@ -231,7 +231,7 @@ return msg.str();
 }
 
 // Return to ship. Plus undock and hover
-std::string Ship::returnToShip() {
+std::string Ship::returnToShip() const{
     std::ostringstream msg;
     msg << "You return to your ship and begin pre-flight checks";
     msg << "The ship is now ready for takeoff.\n\n";
@@ -240,7 +240,7 @@ std::string Ship::returnToShip() {
     return msg.str();
 }
 
-std::string Ship::shipExit() {
+std::string Ship::shipExit() const {
     std::ostringstream msg;
     msg << "You step out onto the surface of " << currentPlanet.getName()
         << ".\n\n";
